@@ -30,7 +30,7 @@ devices = {
 
 
 def create(attendance):
-    args = [('name', '=',  str(attendance['employee_id']) + str(attendance['name'])),
+    args = [('name', '=',  str(attendance['employee_id']) + str(attendance['check_in'])),
             ('module', '=', "anvis_xmlrcp"),
             ('model', '=', 'hr.attendance'),
             ]
@@ -43,16 +43,16 @@ def create(attendance):
             dbname, uid, pwd, 'hr.attendance', 'create', attendance)
 
         external_link = {
-            'name':  str(attendance['employee_id']) + str(attendance['name']),
+            'name':  str(attendance['employee_id']) + str(attendance['check_in']),
             'module':  "anvis_xmlrcp",
             'model': 'hr.attendance',
             'res_id': odooObject_id,
         }
         external_id = sock.execute(
             dbname, uid, pwd, 'ir.model.data', 'create', external_link)
-        print "creado %r %r " % (str(attendance['employee_id']), str(attendance['name']))
+        print "creado %r %r " % (str(attendance['employee_id']), str(attendance['check_in']))
     else:
-        print "ya existe %r %r " % (str(attendance['employee_id']), str(attendance['name']))
+        print "ya existe %r %r " % (str(attendance['employee_id']), str(attendance['check_in']))
 
 
 def device_start(device):
@@ -78,13 +78,22 @@ def device_start(device):
 
             if str(row.code) in employees_rel.keys():
                 action = 'sign_in' if row.type == 0 else 'sign_out'
-                hr_attendance = {
-                    'employee_id': employees_rel[str(row.code)],
-                    'name': (row.datetime + timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
-                    #'name' : parser.parse(row['Fecha/Hora']),
-                    'action': action
-                }
-                create(hr_attendance)
+                action_date = (row.datetime + timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S')
+                print ('action, action_date', action, action_date)
+                employee_id = employees_rel[str(row.code)]
+                if action == 'sign_in':
+                    hr_attendance = {
+                        'employee_id': employee_id,
+                        'check_in': action_date,
+                    }
+                    create(hr_attendance)
+                else:
+                    attendance = sock.execute(dbname, uid, pwd, 'hr.attendance', 'search', [
+                                    ('employee_id', '=', employee_id), ('check_out', '=', False)]
+                                                )
+                    if attendance:
+                        vals = {'check_out': action_date}
+                        sock.execute(dbname, uid, pwd, 'hr.attendance', 'write', attendance, vals)
             else:
                 print "sin registro %r %s " % (row.code, row.datetime)
     except:
@@ -102,13 +111,22 @@ def device_start(device):
             #    continue
             if str(row.code) in employees_rel.keys():
                 action = 'sign_in' if row.type == 0 else 'sign_out'
-                hr_attendance = {
-                    'employee_id': employees_rel[str(row.code)],
-                    'name': (row.datetime + timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
-                    #'name' : parser.parse(row['Fecha/Hora']),
-                    'action': action
-                }
-                create(hr_attendance)
+                action_date = (row.datetime + timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S')
+                print ('action, action_date', action, action_date)
+                employee_id = employees_rel[str(row.code)]
+                if action == 'sign_in':
+                    hr_attendance = {
+                        'employee_id': employee_id,
+                        'check_in': action_date,
+                    }
+                    create(hr_attendance)
+                else:
+                    attendance = sock.execute(dbname, uid, pwd, 'hr.attendance', 'search', [
+                                    ('employee_id', '=', employee_id), ('check_out', '=', False)]
+                                                )
+                    if attendance:
+                        vals = {'check_out': action_date}
+                        sock.execute(dbname, uid, pwd, 'hr.attendance', 'write', attendance, vals)
             else:
                 print "sin registro %r %s " % (row.code, row.datetime)
 
