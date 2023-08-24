@@ -1,11 +1,11 @@
 import xmlrpc.client
 from datetime import timedelta, datetime
 import time
-from ConfigParser import ConfigParser
+import configparser
 
 import anviz
 
-Config = ConfigParser()
+Config = configparser.ConfigParser()
 Config.read('/etc/odoo_clock.conf')
 dbname = Config.get("odooserver", 'dbname')
 username = Config.get("odooserver", 'username')
