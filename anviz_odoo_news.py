@@ -1,4 +1,4 @@
-import xmlrpclib
+import xmlrpc.client
 from datetime import timedelta, datetime
 import time
 from ConfigParser import ConfigParser
@@ -12,10 +12,10 @@ username = Config.get("odooserver", 'username')
 pwd = Config.get("odooserver", 'pwd')
 url = Config.get("odooserver", 'url')
 
-sock_common = xmlrpclib.ServerProxy(url + 'xmlrpc/common')
+sock_common = xmlrpc.client.ServerProxy(url + 'xmlrpc/common')
 
 uid = sock_common.login(dbname, username, pwd)
-sock = xmlrpclib.ServerProxy(url + 'xmlrpc/object')
+sock = xmlrpc.client.ServerProxy(url + 'xmlrpc/object')
 
 devices = {
     '2': (2, '192.168.89.220', 8010),
