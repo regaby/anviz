@@ -69,69 +69,66 @@ def device_start(device):
     for employee in employees:
         employees_rel[employee['anviz_code']] = employee['id']
 
-    record = clock.download_new_records()
-    print ('record', record)
+    try:
+        record = clock.download_new_records()
+        #record = clock.download_all_records()
+        for row in record:
+            if row.type == 2:
+                continue
 
-    # try:
-    #     record = clock.download_new_records()
-    #     #record = clock.download_all_records()
-    #     for row in record:
-    #         if row.type == 2:
-    #             continue
+            if str(row.code) in employees_rel.keys():
+                action = 'sign_in' if row.type == 0 else 'sign_out'
+                action_date = (row.datetime + timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S')
+                print ('action, action_date', action, action_date)
+                employee_id = employees_rel[str(row.code)]
+                if action == 'sign_in':
+                    hr_attendance = {
+                        'employee_id': employee_id,
+                        'check_in': action_date,
+                    }
+                    create(hr_attendance)
+                else:
+                    attendance = sock.execute(dbname, uid, pwd, 'hr.attendance', 'search', [
+                                    ('employee_id', '=', employee_id), ('check_out', '=', False)]
+                                                )
+                    if attendance:
+                        vals = {'check_out': action_date}
+                        sock.execute(dbname, uid, pwd, 'hr.attendance', 'write', attendance, vals)
+            else:
+                print ("sin registro %r %s " % (row.code, row.datetime))
+    except:
+        time.sleep(7)
+        print ("segundo intento")
+        clock = anviz.Device(device_id=devices[device][0], ip_addr=devices[
+                         device][1], ip_port=devices[device][2])
 
-    #         if str(row.code) in employees_rel.keys():
-    #             action = 'sign_in' if row.type == 0 else 'sign_out'
-    #             action_date = (row.datetime + timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S')
-    #             print ('action, action_date', action, action_date)
-    #             employee_id = employees_rel[str(row.code)]
-    #             if action == 'sign_in':
-    #                 hr_attendance = {
-    #                     'employee_id': employee_id,
-    #                     'check_in': action_date,
-    #                 }
-    #                 create(hr_attendance)
-    #             else:
-    #                 attendance = sock.execute(dbname, uid, pwd, 'hr.attendance', 'search', [
-    #                                 ('employee_id', '=', employee_id), ('check_out', '=', False)]
-    #                                             )
-    #                 if attendance:
-    #                     vals = {'check_out': action_date}
-    #                     sock.execute(dbname, uid, pwd, 'hr.attendance', 'write', attendance, vals)
-    #         else:
-    #             print "sin registro %r %s " % (row.code, row.datetime)
-    # except:
-    #     time.sleep(7)
-    #     print "segundo intento"
-    #     clock = anviz.Device(device_id=devices[device][0], ip_addr=devices[
-    #                      device][1], ip_port=devices[device][2])
-
-    #     record = clock.download_new_records()
-    #     #record = clock.download_all_records()
-    #     for row in record:
-    #         if row.type == 2:
-    #             continue
-	#     #if (row.datetime + timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S') <  datetime.datetime('2021-05-29'):
-    #         #    continue
-    #         if str(row.code) in employees_rel.keys():
-    #             action = 'sign_in' if row.type == 0 else 'sign_out'
-    #             action_date = (row.datetime + timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S')
-    #             print ('action, action_date', action, action_date)
-    #             employee_id = employees_rel[str(row.code)]
-    #             if action == 'sign_in':
-    #                 hr_attendance = {
-    #                     'employee_id': employee_id,
-    #                     'check_in': action_date,
-    #                 }
-    #                 create(hr_attendance)
-    #             else:
-    #                 attendance = sock.execute(dbname, uid, pwd, 'hr.attendance', 'search', [
-    #                                 ('employee_id', '=', employee_id), ('check_out', '=', False)]
-    #                                             )
-    #                 if attendance:
-    #                     vals = {'check_out': action_date}
-    #                     sock.execute(dbname, uid, pwd, 'hr.attendance', 'write', attendance, vals)
-    #         else:
-    #             print "sin registro %r %s " % (row.code, row.datetime)
+        record = clock.download_new_records()
+        #record = clock.download_all_records()
+        for row in record:
+            if row.type == 2:
+                continue
+	    #if (row.datetime + timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S') <  datetime.datetime('2021-05-29'):
+            #    continue
+            if str(row.code) in employees_rel.keys():
+                action = 'sign_in' if row.type == 0 else 'sign_out'
+                action_date = (row.datetime + timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S')
+                print ('action, action_date', action, action_date)
+                employee_id = employees_rel[str(row.code)]
+                if action == 'sign_in':
+                    hr_attendance = {
+                        'employee_id': employee_id,
+                        'check_in': action_date,
+                    }
+                    create(hr_attendance)
+                else:
+                    attendance = sock.execute(dbname, uid, pwd, 'hr.attendance', 'search', [
+                                    ('employee_id', '=', employee_id), ('check_out', '=', False)]
+                                                )
+                    if attendance:
+                        vals = {'check_out': action_date}
+                        sock.execute(dbname, uid, pwd, 'hr.attendance', 'write', attendance, vals)
+            else:
+                print ("sin registro %r %s " % (row.code, row.datetime))
 
 
 if __name__ == '__main__':
