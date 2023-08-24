@@ -73,6 +73,7 @@ def device_start(device):
         record = clock.download_new_records()
         #record = clock.download_all_records()
         for row in record:
+            print ('row', row)
             if row.type == 2:
                 continue
 
