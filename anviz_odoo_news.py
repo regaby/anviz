@@ -50,9 +50,9 @@ def create(attendance):
         }
         external_id = sock.execute(
             dbname, uid, pwd, 'ir.model.data', 'create', external_link)
-        print ("creado %r %r ") % (str(attendance['employee_id']), str(attendance['check_in']))
+        print ("creado %r %r " % (str(attendance['employee_id']), str(attendance['check_in'])) )
     else:
-        print ("ya existe %r %r ") % (str(attendance['employee_id']), str(attendance['check_in']))
+        print ("ya existe %r %r " % (str(attendance['employee_id']), str(attendance['check_in'])))
 
 
 def device_start(device):
