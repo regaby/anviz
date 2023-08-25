@@ -73,9 +73,9 @@ def device_start(device):
         record = clock.download_new_records()
         #record = clock.download_all_records()
         for row in record:
-            print ('row', row)
             if row.type == 2:
                 continue
+            print ('row', row)
 
             if str(row.code) in employees_rel.keys():
                 action = 'sign_in' if row.type == 0 else 'sign_out'
@@ -108,6 +108,7 @@ def device_start(device):
         for row in record:
             if row.type == 2:
                 continue
+            print ('row', row)
 	    #if (row.datetime + timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S') <  datetime.datetime('2021-05-29'):
             #    continue
             if str(row.code) in employees_rel.keys():
@@ -138,4 +139,4 @@ if __name__ == '__main__':
         try:
             device_start(dev)
         except Exception as e:
-            print ('error en %s' % dev)
+            print ('\n\nerror en %s: %s' % (dev, e))
