@@ -97,9 +97,9 @@ def device_start(device):
                         sock.execute(dbname, uid, pwd, 'hr.attendance', 'write', attendance, vals)
             else:
                 print ("sin registro %r %s " % (row.code, row.datetime))
-    except:
+    except Exception as e:
         time.sleep(7)
-        print ("segundo intento")
+        print ("segundo intento: %s" % (e))
         clock = anviz.Device(device_id=devices[device][0], ip_addr=devices[
                          device][1], ip_port=devices[device][2])
 
