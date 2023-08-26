@@ -59,7 +59,7 @@ def device_start(device):
     clock = anviz.Device(device_id=devices[device][0], ip_addr=devices[
                          device][1], ip_port=devices[device][2])
 
-    print("Conectado a %s %s" % (devices[device][1], devices[device][3]))
+    print("\n\nConectado a %s %s" % (devices[device][1], devices[device][3]))
     clock.set_datetime(datetime.now())
     print("Fecha actualizada a %s " % clock.get_datetime())
 
