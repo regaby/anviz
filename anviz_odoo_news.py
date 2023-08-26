@@ -80,7 +80,7 @@ def device_start(device):
             if str(row.code) in employees_rel.keys():
                 action = 'sign_in' if row.type == 0 else 'sign_out'
                 action_date = (row.datetime + timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S')
-                print ('action, action_date', action, action_date)
+                # print ('action, action_date', action, action_date)
                 employee_id = employees_rel[str(row.code)]
                 if action == 'sign_in':
                     hr_attendance = {
@@ -114,7 +114,7 @@ def device_start(device):
             if str(row.code) in employees_rel.keys():
                 action = 'sign_in' if row.type == 0 else 'sign_out'
                 action_date = (row.datetime + timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S')
-                print ('action, action_date', action, action_date)
+                # print ('action, action_date', action, action_date)
                 employee_id = employees_rel[str(row.code)]
                 if action == 'sign_in':
                     hr_attendance = {
