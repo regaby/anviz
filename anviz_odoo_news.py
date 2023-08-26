@@ -18,14 +18,14 @@ uid = sock_common.login(dbname, username, pwd)
 sock = xmlrpc.client.ServerProxy(url + 'xmlrpc/object')
 
 devices = {
-    '2': (2, '192.168.89.220', 8010),
+    '2': (2, '192.168.89.220', 8010, 'Outlet y perito'),
     #'1': (1, '192.168.93.8', 5010),
-    '3': (3, '192.168.94.12', 8010),
+    '3': (3, '192.168.94.12', 8010, 'Planas'),
+    #
     '5': (5, '192.168.97.12', 8010),
-    '7': (7, '192.168.96.205', 5010),
+    '7': (7, '192.168.96.205', 5010, 'Godoy'),
     #'9': (9, '192.168.91.10', 8009),
-    '11': (11, '192.168.90.15', 8085),
-
+    '11': (11, '192.168.90.15', 8085, 'Plottier'),
 }
 
 
@@ -59,7 +59,7 @@ def device_start(device):
     clock = anviz.Device(device_id=devices[device][0], ip_addr=devices[
                          device][1], ip_port=devices[device][2])
 
-    print("Conectado a %s " % devices[device][1])
+    print("Conectado a %s %s" % (devices[device][1], devices[device][3]))
     clock.set_datetime(datetime.now())
     print("Fecha actualizada a %s " % clock.get_datetime())
 
@@ -99,7 +99,7 @@ def device_start(device):
                 print ("sin registro %r %s " % (row.code, row.datetime))
     except Exception as e:
         time.sleep(7)
-        print ("segundo intento: %s" % (e))
+        print ("\n\nsegundo intento: %s" % (e))
         clock = anviz.Device(device_id=devices[device][0], ip_addr=devices[
                          device][1], ip_port=devices[device][2])
 
