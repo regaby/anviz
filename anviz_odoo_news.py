@@ -24,7 +24,7 @@ devices = {
     #
     '5': (5, '192.168.97.12', 8010, 'Cultraco'),
     '7': (7, '192.168.96.205', 5010, 'Godoy'),
-    #'9': (9, '192.168.91.10', 8009),
+    '9': (9, '192.168.91.10', 8009, 'Cipo'),
     '11': (11, '192.168.90.15', 8085, 'Plottier'),
 }
 
@@ -69,6 +69,11 @@ def device_start(device):
     for employee in employees:
         employees_rel[employee['anviz_code']] = employee['id']
 
+    devices_rel = {}
+    devices_odoo = sock.execute(dbname, uid, pwd, 'hr.attendance.machine', 'search_read', [
+                             ('ip_address', '!=', False)], ['id', 'ip_address'])
+    for device_odoo in devices_odoo:
+        devices_rel[device_odoo['ip_address']] = device_odoo['id']
     try:
         record = clock.download_new_records()
         #record = clock.download_all_records()
@@ -86,6 +91,7 @@ def device_start(device):
                     hr_attendance = {
                         'employee_id': employee_id,
                         'check_in': action_date,
+                        'machine_id': devices_rel[devices[device][1]],
                     }
                     create(hr_attendance)
                 else:
@@ -120,6 +126,7 @@ def device_start(device):
                     hr_attendance = {
                         'employee_id': employee_id,
                         'check_in': action_date,
+                        'machine_id': devices_rel[devices[device][1]],
                     }
                     create(hr_attendance)
                 else:
